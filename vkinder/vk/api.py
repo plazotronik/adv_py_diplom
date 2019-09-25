@@ -4,7 +4,8 @@ import vk_api
 import getpass
 
 
-APP_ID = 7136810
+# APP_ID = 7136810
+APP_ID = 6222115
 # +2+4+8+16+64+128+1024+131072+262144
 SCOPE = 394462 # expires in 86400 seconds
 # +2+4+8+16+64+128+1024+131072+262144+65536
