@@ -3,8 +3,9 @@
 from vkinder.db.objects import db, Searcher
 from peewee import InternalError, IntegrityError
 
-# check exist table
+
 def create_table():
+    '''check exist table'''
     try:
         db.connect()
         Searcher.create_table()
@@ -12,8 +13,8 @@ def create_table():
         return err
 
 
-# write result to db
 def add_rows(list_dicts):
+    '''write result to db'''
     error = ''
     for dict_ in list_dicts:
         row = Searcher(
@@ -33,11 +34,15 @@ def add_rows(list_dicts):
         return 'OK'
 
 
-# list ids for check exist id
 def list_ids():
+    '''list ids for check exist id'''
     column = Searcher.select(Searcher.user_id)
     ids = [data.user_id for data in column]
     return ids
+
+
+def close_connect():
+    return db.close()
 
 
 if __name__ == '__main__':

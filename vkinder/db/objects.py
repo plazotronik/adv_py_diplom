@@ -1,27 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from playhouse.sqlite_ext import SqliteExtDatabase
-from peewee import Model, SqliteDatabase, MySQLDatabase
-from peewee import AutoField, TextField, DateTimeField, IntegerField, CharField, FloatField, PrimaryKeyField, TimestampField, fn
-from peewee import InternalError, IntegrityError
-# from peewee import *
-from vkinder.init_app import searcher_id
-# import json
+import os
+from peewee import Model
 from datetime import datetime
+from vkinder.interactions import searcher_id
+from playhouse.sqlite_ext import SqliteExtDatabase
+from peewee import AutoField, TextField, DateTimeField, IntegerField, CharField
 
 
-db = SqliteExtDatabase('vkinder.db', pragmas={
+path_db = os.path.join('vkinder', 'db', 'vkinder.db')
+db = SqliteExtDatabase(path_db, pragmas={
     'journal_mode': 'wal',
     'cache_size': -64 * 1000,
     'synchronous': 0})
 table = 'searcher_%s' % searcher_id
 
-# database
+
 class Vkinder(Model):
     class Meta:
         database = db
 
-# table
+
 class Searcher(Vkinder):
     id = AutoField()
     user_id = IntegerField(null=False, unique=True)

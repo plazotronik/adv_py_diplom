@@ -1,53 +1,100 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# from vkinder.init_app import init_variable
+from pprint import pprint
+from vkinder.vk.objects import UserFound, UserSearcher
+from vkinder.common_functions import init_variable, YES, get_top_ids
 
 
-# ФУНКЦИЯ ПРИВЕТСТВИЯ - НАЧАЛЬНОЕ ПРИВЕТСТВИЕ, УПРАВЛЕНИЕ ПРОГРАММОЙ
+def print_n_write(list_dicts):
+    from vkinder.db.methods import add_rows
+    print('\n   <<< ТОП ПО ВЕРСИИ VKINDER >>>\n')
+    pprint(list_dicts)
+    add_rows(list_dicts)
+    print('\n   -= Результаты поиска записаны в БД =-\n')
+
+
+def show_top(dict_):
+    result = dict_
+    while True:
+        if len(result) > 10:
+            top_ids = get_top_ids(result)
+            for key in result:
+                if key in top_ids:
+                    result.pop(key)
+            top_list = [UserFound(vk_cursor, user_id).__dict__() for user_id in top_ids]
+            print_n_write(top_list)
+            answer = input('Показать остальных найденных? (да/нет) - ')
+            if answer in YES:
+                continue
+            else:
+                break
+        else:
+            top_list = [UserFound(vk_cursor, user_id).__dict__() for user_id in get_top_ids(result)]
+            print_n_write(top_list)
+            break
+
+
+def run():
+    global vk_cursor, searcher_id
+    while True:
+        try:
+            vk_ = init_variable()
+            vk_cursor = vk_.get_api()
+            searcher_id = vk_cursor.users.get()[0]['id']
+        except Exception as err:
+            continue
+        else:
+            break
+    iam = UserSearcher(vk_cursor, searcher_id)
+    data_ = iam.search()
+    reference = iam.__dict__()
+    print('\n   Анализ совпадения по группам даст более релевантный результат.'
+          '\n   НО это займет больше времени (примерно на 50-60 минут).')
+    answer = input('Используем для анализа совпадение по группам? (да/нет) - ')
+    print('Анализируем...')
+    from vkinder.data_operation.analise import Analise
+    from vkinder.db.methods import create_table, list_ids, close_connect
+    create_table()
+    analise = Analise(data_, list_ids(), reference, vk_cursor)
+    if answer in YES:
+        analise.vote_groups()
+    else:
+        analise.vote_friends_mutual()
+    result = analise.result()
+    if result:
+        show_top(result)
+        close_connect()
+        print('Поиск окончен.')
+    else:
+        close_connect()
+        print('Поиск не дал результатов.')
 
 
 def hello():
-    while True:
-        print('Hello. you have find cool friend?')
-        # bla-bla-bla
-        # init_variable()
-        # bla-bla-bla
-        break
-
-
-
-# def hello():
-#     '''
-#     1. Вывод сообществ пользователя vk.com, где нет ни одного его друга.
-#     2. Вывод сообществ пользователя vk.com, где есть его друзья не более, чем заданное число.
-#     9. Вывод этой справки.
-#     0. Выйти из программы.
-#     '''
-#     good_bye = ('\n\n   Надеемся Вам очень понравилась наша программа!'
-#                 '\n   Вопросы и предложения присылайте по адресу: info@it-vi.ru',
-#                 '\n   Досвидания!'.upper())
-#     print('\n\nДобро пожаловать в "bla-bla-bla"'.upper())
-#     print('\n\nВам необходимо ввести цифру ниже, чтобы программа выполнила действие: '
-#           '\n   9. Вывод справки.')
-#     try:
-#         while True:
-#             prog = str(input(f'\n{"=" * 80}'
-#                              '\n\n  номер действия: '.upper()))
-#             if prog == '1':
-#                 pass
-#             elif prog == '2':
-#                 try:
-#                     pass
-#                 except ValueError:
-#                     print('\nВведено некорректное количество друзей. Это должно быть целое число. '
-#                           'Попробуйте еще раз.')
-#             elif prog == '9':
-#                 hello().__help__()
-#             elif prog == '0':
-#                 print(good_bye)
-#                 break
-#             else:
-#                 print('\nТакой функционал программы пока не подвезли)))'
-#                       '\nЕсть предложения? Пишите по адресу: info@it-vi.ru')
-#     except KeyboardInterrupt:
-#         print(good_bye)
+    '''
+    1. Поиск партнера в vk.com
+    9. Вывод справки.
+    0. Выйти из программы.
+    '''
+    good_bye = '\n\n   Надеемся Вам очень понравилась наша программа!' \
+               '\n   Вопросы и предложения присылайте по адресу: info@it-vi.ru' \
+               '\n   ДОСВИДАНИЯ!'
+    print('\n\nДобро пожаловать в "Vkinder"'.upper())
+    print('\n   Вам необходимо ввести цифру ниже, чтобы программа выполнила действие: '
+          '\n   (для справки введите 9)')
+    try:
+        while True:
+            prog = str(input(f'\n{"=" * 80}'
+                             '\n\n  номер действия:  '.upper()))
+            if prog == '1':
+                run()
+            elif prog == '9':
+                print(hello.__doc__)
+            elif prog == '0':
+                print(good_bye)
+                break
+            else:
+                print('\nТакой функционал программы пока не подвезли)))'
+                      '\nЕсть предложения? Пишите по адресу: info@it-vi.ru')
+    except KeyboardInterrupt:
+        print(good_bye)
