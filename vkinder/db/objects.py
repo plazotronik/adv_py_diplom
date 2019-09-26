@@ -30,5 +30,5 @@ class Searcher(Vkinder):
     date_search = DateTimeField(default=datetime.now())
 
     class Meta:
-        db_table = table
-        order_by = ('id',)
+        table_name = table
+        name = table

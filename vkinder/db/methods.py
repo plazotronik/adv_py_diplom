@@ -1,16 +1,25 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from vkinder.db.objects import db, Searcher
+import os
+from vkinder.db.objects import db, Searcher, path_db
 from peewee import InternalError, IntegrityError
+
+
+def create_file_db():
+    if not os.path.exists(path_db):
+        open(path_db, "w").close()
 
 
 def create_table():
     '''check exist table'''
+    create_file_db()
     try:
         db.connect()
         Searcher.create_table()
     except InternalError as err:
         return err
+    else:
+        return 'ok'
 
 
 def add_rows(list_dicts):
@@ -41,11 +50,17 @@ def list_ids():
     return ids
 
 
+def delete_table():
+    execute = Searcher.delete().where(Searcher.user_id in list_ids())
+    return execute.execute()
+
+
 def close_connect():
     return db.close()
 
 
 if __name__ == '__main__':
+    create_file_db()
     create_table()
     # from vkinder.data_operation.analise import result
     # print(add_rows(result))
