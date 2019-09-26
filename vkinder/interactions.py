@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import os
 from pprint import pprint
+from datetime import datetime
 from vkinder.vk.objects import UserFound, UserSearcher
-from vkinder.common_functions import init_variable, YES, get_top_ids
+from vkinder.common_functions import init_variable, YES, get_top_ids, write_json
 
 
 def print_n_write(list_dicts):
     from vkinder.db.methods import add_rows
     print('\n   <<< ТОП ПО ВЕРСИИ VKINDER >>>\n')
     pprint(list_dicts)
+    filename = f'top_for_searcher_{searcher_id}_{datetime.now().strftime("%Y.%m.%d_%H-%M-%S")}.json'
+    path = os.path.join('vkinder', 'db', 'result')
+    write_json(list_dicts, filename, path)
     add_rows(list_dicts)
     print('\n   -= Результаты поиска записаны в БД =-\n')
 
@@ -48,8 +53,8 @@ def run():
     iam = UserSearcher(vk_cursor, searcher_id)
     data_ = iam.search()
     reference = iam.__dict__()
-    print('\n   Анализ совпадения по группам даст более релевантный результат.'
-          '\n   НО это займет больше времени (примерно на 50-60 минут).')
+    print('\nАнализ совпадения по группам даст более релевантный результат.'
+          '\nНО это займет больше времени (до 50 минут).')
     answer = input('Используем для анализа совпадение по группам? (да/нет) - ')
     print('Анализируем...')
     from vkinder.data_operation.analise import Analise
@@ -78,7 +83,7 @@ def hello():
     '''
     good_bye = '\n\n   Надеемся Вам очень понравилась наша программа!' \
                '\n   Вопросы и предложения присылайте по адресу: info@it-vi.ru' \
-               '\n   ДОСВИДАНИЯ!'
+               '\n   ДОСВИДАНИЯ!\n'
     print('\n\nДобро пожаловать в "Vkinder"'.upper())
     print('\n   Вам необходимо ввести цифру ниже, чтобы программа выполнила действие: '
           '\n   (для справки введите 9)')

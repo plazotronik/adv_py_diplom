@@ -56,6 +56,7 @@ class UserSearcher(UserVK):
             self.city = self.resp['city']['id']
         else:
             self.city = find_city(self.cursor)
+        print()
         if 'activities' in keys_:
             self.activities = self.resp['activities']
         else:
@@ -250,23 +251,3 @@ class UserFound(UserVK):
             'page_url': self.url,
             'top_photo': self.top_photo(),
         }
-
-
-if __name__ == '__main__':
-    pass
-    # print(UserFound(7649363).top_photo())
-    # print(UserFound(10554929).top_photo())
-    # # print(UserFound(412859541).top_photo())
-    # print(UserFound(10554929).fio)
-    # tmp1 = UserSearcher()
-    # tmp1.search()
-    # print(tmp1.__dict__())
-    # tmp2 = UserSearcher()
-    # tmp2.search()
-    # print(tmp2.__dict__())
-    # iam = UserSearcher().search()
-    # from vkinder.common_functions import write_json
-    # write_json(iam, 'data.json')
-    # print(iam)
-    # print(len(iam))
-

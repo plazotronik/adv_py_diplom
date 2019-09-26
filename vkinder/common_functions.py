@@ -14,7 +14,7 @@ KEY_API = 'trnsl.1.1.20190704T182934Z.17f33d8db55385c6.e6d41260c9ccabfba9197455f
 
 
 def init_variable():
-    two_factor = input('Вы используете двухфакторную авторизацию? (да/нет) - ')
+    two_factor = input('\nВы используете двухфакторную авторизацию? (да/нет) - ')
     login = str(input('Пожалуйста, введите логин (желательно номер телефона): '))
     password = getpass.getpass('Введите Ваш пароль и нажмите "Enter" (символы не отображаются): ')
     if two_factor in YES:
@@ -48,7 +48,6 @@ def translate_auto(text, to='ru'):
 
 
 def max_value_of_keys(dict_):
-    # функция для поиска ключа с максимальным значением
     index = 0
     key_ = None
     for key in dict_.keys():
@@ -77,6 +76,34 @@ def get_top_ids(dict_):
     return list_top_ids
 
 
-if __name__ == '__main__':
-    # write_json(config_db, 'config_db.json')
-    pass
+def write_json(text, filename, path='', mode='wt'):
+    if path:
+        make_dir(path)
+    out_file = os.path.join(path, f'{filename}')
+    txt = json.dumps(text, sort_keys=True, indent=4, ensure_ascii=False)
+    with open(out_file, mode=mode, encoding='utf8') as file:
+        file.write(txt)
+
+
+def make_dir(path):
+    pwd = os.getcwd()
+    if '\\' in path:
+        lst = path.split('\\')
+        for i in lst:
+            if i in os.listdir():
+                os.chdir(i)
+            else:
+                os.mkdir(i)
+                os.chdir(i)
+    elif '/' in path:
+        lst = path.split('/')
+        for i in lst:
+            if i in os.listdir():
+                os.chdir(i)
+            else:
+                os.mkdir(i)
+                os.chdir(i)
+    else:
+        if path not in os.listdir():
+            os.mkdir(path)
+    os.chdir(pwd)

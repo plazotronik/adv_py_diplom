@@ -152,9 +152,3 @@ def get_top_urls(list_):
                         list_.remove(photo)
         index += 1
     return list_photos
-
-if __name__ == '__main__':
-    print(bdate_to_age('1.1.1980'))
-    # find_city()
-    # print(gender_determination(1))
-

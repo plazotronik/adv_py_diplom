@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
-from vkinder.db.objects import db, Searcher, path_db
 from peewee import InternalError, IntegrityError
+from vkinder.db.objects import db, Searcher, path_db
 
 
 def create_file_db():
@@ -50,21 +50,10 @@ def list_ids():
     return ids
 
 
-def delete_table():
+def delete_rows():
     execute = Searcher.delete().where(Searcher.user_id in list_ids())
     return execute.execute()
 
 
 def close_connect():
     return db.close()
-
-
-if __name__ == '__main__':
-    create_file_db()
-    create_table()
-    # from vkinder.data_operation.analise import result
-    # print(add_rows(result))
-    for i in list_ids():
-        print(i)
-    print(list_ids())
-
